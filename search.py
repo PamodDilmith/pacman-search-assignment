@@ -128,7 +128,11 @@ def breadthFirstSearch(problem: SearchProblem):
     return []
 
 def uniformCostSearch(problem: SearchProblem):
-    """Search the node of least total cost first."""
+    """
+    Search the node of least total cost first.
+    Uses util.PriorityQueue as the fringe with priority equal to backward path cost g(n).
+    Implements graph search: tracking visited states and testing the goal upon dequeue.
+    """
     fringe = util.PriorityQueue()
     visited = set()
 
@@ -159,7 +163,11 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
+    """
+    Search the node that has the lowest combined cost and heuristic first.
+    Uses util.PriorityQueue as the fringe with priority f(n) = g(n) + h(n).
+    Implements graph search: tracking visited states and testing the goal upon dequeue.
+    """
     fringe = util.PriorityQueue()
     visited = set()
 
