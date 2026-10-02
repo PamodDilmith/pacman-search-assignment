@@ -42,6 +42,7 @@ import util
 import time
 import search
 import pacman
+import itertools
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
@@ -367,8 +368,24 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    currentPosition, visited = state
+    unvisited = [corners[i] for i in range(len(corners)) if not visited[i]]
+
+    if not unvisited:
+        return 0
+
+    if len(unvisited) == 1:
+        return util.manhattanDistance(currentPosition, unvisited[0])
+
+    minCost = float('inf')
+    for perm in itertools.permutations(unvisited):
+        cost = util.manhattanDistance(currentPosition, perm[0])
+        for i in range(len(perm) - 1):
+            cost += util.manhattanDistance(perm[i], perm[i + 1])
+        if cost < minCost:
+            minCost = cost
+
+    return minCost
 
 
 class AStarCornersAgent(SearchAgent):
