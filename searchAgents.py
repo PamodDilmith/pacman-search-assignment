@@ -484,16 +484,25 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     if not foodList:
         return 0
 
+    if 'mazeDistances' not in problem.heuristicInfo:
+        problem.heuristicInfo['mazeDistances'] = {}
+
+    distanceCache = problem.heuristicInfo['mazeDistances']
+
     # Calculate distance to the farthest food
     maxDistance = 0
 
     for food in foodList:
-        distance = (
-            abs(position[0] - food[0])
-            + abs(position[1] - food[1])
-        )
+        key = tuple(sorted((position, food)))
 
-        maxDistance = max(maxDistance, distance)
+        if key not in distanceCache:
+            distanceCache[key] = mazeDistance(
+                position,
+                food,
+                problem.startingGameState
+            )
+
+        maxDistance = max(maxDistance, distanceCache[key])
 
     return maxDistance
 
