@@ -86,18 +86,74 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.Stack()
+    visited = set()
+
+    # Store tuples of (state, actions)
+    fringe.push((problem.getStartState(), []))
+
+    while not fringe.isEmpty():
+        state, actions = fringe.pop()
+
+        if problem.isGoalState(state):
+            return actions
+
+        if state not in visited:
+            visited.add(state)
+            for next_state, action, step_cost in problem.getSuccessors(state):
+                if next_state not in visited:
+                    fringe.push((next_state, actions + [action]))
+
+    return []
 
 def breadthFirstSearch(problem: SearchProblem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.Queue()
+    visited = set()
+
+    # Store tuples of (state, actions)
+    fringe.push((problem.getStartState(), []))
+
+    while not fringe.isEmpty():
+        state, actions = fringe.pop()
+
+        if problem.isGoalState(state):
+            return actions
+
+        if state not in visited:
+            visited.add(state)
+            for next_state, action, step_cost in problem.getSuccessors(state):
+                if next_state not in visited:
+                    fringe.push((next_state, actions + [action]))
+
+    return []
 
 def uniformCostSearch(problem: SearchProblem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    """
+    Search the node of least total cost first.
+    Uses util.PriorityQueue as the fringe with priority equal to backward path cost g(n).
+    Implements graph search: tracking visited states and testing the goal upon dequeue.
+    """
+    fringe = util.PriorityQueue()
+    visited = set()
+
+    # Store tuples of (state, actions, current_cost)
+    start_state = problem.getStartState()
+    fringe.push((start_state, [], 0), 0)
+
+    while not fringe.isEmpty():
+        state, actions, current_cost = fringe.pop()
+
+        if problem.isGoalState(state):
+            return actions
+
+        if state not in visited:
+            visited.add(state)
+            for next_state, action, step_cost in problem.getSuccessors(state):
+                if next_state not in visited:
+                    next_cost = current_cost + step_cost
+                    fringe.push((next_state, actions + [action], next_cost), next_cost)
+
+    return []
 
 def nullHeuristic(state, problem=None):
     """
@@ -107,9 +163,35 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    """
+    Search the node that has the lowest combined cost and heuristic first.
+    Uses util.PriorityQueue as the fringe with priority f(n) = g(n) + h(n).
+    Implements graph search: tracking visited states and testing the goal upon dequeue.
+    """
+    fringe = util.PriorityQueue()
+    visited = set()
+
+    # Store tuples of (state, actions, current_cost)
+    start_state = problem.getStartState()
+    start_cost = 0
+    start_priority = start_cost + heuristic(start_state, problem)
+    fringe.push((start_state, [], start_cost), start_priority)
+
+    while not fringe.isEmpty():
+        state, actions, current_cost = fringe.pop()
+
+        if problem.isGoalState(state):
+            return actions
+
+        if state not in visited:
+            visited.add(state)
+            for next_state, action, step_cost in problem.getSuccessors(state):
+                if next_state not in visited:
+                    next_cost = current_cost + step_cost
+                    priority = next_cost + heuristic(next_state, problem)
+                    fringe.push((next_state, actions + [action], next_cost), priority)
+
+    return []
 
 
 # Abbreviations
